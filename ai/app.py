@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 import vertexai
 import base64
+import logging
 from vertexai.generative_models import GenerativeModel, Part, FinishReason
 import vertexai.preview.generative_models as generative_models
 from vertexai.generative_models import (
@@ -18,6 +19,19 @@ from vertexai.generative_models import (
     Part,
 )
 
+
+# Set environment variables to suppress TensorFlow and gRPC logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Suppress TensorFlow logs
+os.environ['GRPC_VERBOSITY'] = 'ERROR'    # Suppress gRPC logs
+os.environ['ABSL_LOG_LEVEL'] = '3'        # Suppress Abseil logs
+
+# Initialize logging early
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
+
+# Suppress Abseil and gRPC logs specifically
+logging.getLogger('absl').setLevel(logging.ERROR)
+logging.getLogger('grpc').setLevel(logging.ERROR)
+
 app = Flask(__name__)
 CORS(app)
 
@@ -26,6 +40,7 @@ load_dotenv()
 PROJECT_ID = os.getenv("PROJECT_ID", "default_project_id")
 LOCATION = os.getenv("LOCATION", "default_location")
 MODEL_NAME = os.getenv("MODEL_NAME", "default_model_name")
+GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "default_model_name")
 
 mandatory_vars = {
     "PROJECT_ID": PROJECT_ID,
@@ -36,6 +51,12 @@ mandatory_vars = {
 for var_name, var_value in mandatory_vars.items():
     if var_value == f"default_{var_name.lower()}":
         raise ValueError(f"Environment variable {var_name} must be set")
+    
+if GOOGLE_APPLICATION_CREDENTIALS:
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS
+    logging.info("Using google application credentials")
+else:
+    logging.info("Using application default credentials")
 
 def get_prompt():
     with open('prompt.txt', 'r') as file:
@@ -70,7 +91,6 @@ def generate(data):
         safety_settings=safety_settings,
         stream=False,
     )
-    print("error4")
 
     try:
         text = responses.candidates[0].content.parts[0].text
@@ -97,9 +117,11 @@ def analyze():
             feedback = generate(driving_data)
             return json.dumps(feedback), 200
         except Exception as e:
+            logging.error("Error processing data: %s", str(e))
             return json.dumps({"message": "Internal server error. Please try again later."}), 500
     
     except Exception as e:
+        logging.error("Invalid data format: %s", str(e))
         return json.dumps({"message": "Invalid data format."}), 400
 
 if __name__ == "__main__":

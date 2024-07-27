@@ -11,5 +11,5 @@ jobs:
     uses: ./.github/workflows/build-docker.yml
     with:
       folder_path: api/
-      images_name: ghcr.io/safina-ai-api
+      images_name: ghcr.io/anagata-hackjakarta/safina-ai-api
     secrets: inherit

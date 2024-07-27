@@ -3,3 +3,4 @@ workdir/**
 !workdir/.gitkeep
 .vimsession
 traefik.yml
+key.json

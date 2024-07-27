@@ -81,6 +81,8 @@ services:
     image: ghcr.io/anagata-hackjakarta/safina-ai-ai:latest
     restart: unless-stopped
     env_file: .env
+    volumes:
+      - ./key.json:/app/key.json:z
     labels:
       traefik.enable: true
       traefik.http.routers.backend-ai.rule: Host(`ai-api-himeko.thatismunn.my.id`)

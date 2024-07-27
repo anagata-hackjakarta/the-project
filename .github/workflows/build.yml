@@ -1,0 +1,15 @@
+name: Build Image for all Dockerfile
+
+on:
+  push:
+    branches:
+      - master
+      - development
+
+jobs:
+  build-api:
+    uses: ./workflows/build.yml
+    with:
+      folder_path: api/
+      images_name: ghcr.io/safina-ai-api
+    secrets: inherit

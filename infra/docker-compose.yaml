@@ -1,0 +1,27 @@
+services:
+  mariadb:
+    container_name: mariadb
+    image: docker.io/library/mariadb:11.4.2-noble
+    restart: unless-stopped
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD
+      interval: 5s
+      retries: 5
+    volumes:
+      - ./workdir/mariadb:/var/lib/mysql:z
+    ports:
+      - 3306:3306
+    env_file:
+      - ./.env
+    networks:
+      - private
+
+networks:
+  private:
+    ipam:
+      driver: default
+    internal: true
+  public:
+    ipam:
+      driver: default
+    internal: false

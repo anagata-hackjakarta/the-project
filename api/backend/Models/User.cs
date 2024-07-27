@@ -36,4 +36,12 @@ public class User
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     [Column("updatedAt"), Required, JsonPropertyName("updatedAt")]
     public DateTime UpdatedAt { get; set; }
+
+    public static void Relations(ModelBuilder model)
+    {
+        model.Entity<User>(entity =>
+        {
+            entity.HasIndex(e => e.UUID).IsUnique();
+        });
+    }
 }

@@ -1,0 +1,14 @@
+google-generativeai
+python-dotenv
+google-cloud-aiplatform 
+google-cloud-discoveryengine
+langchain
+pytz
+Flask
+langchain-community
+gunicorn
+flask_cors
+markdown
+gradio
+langchain-google-vertexai
+langchain-google-community

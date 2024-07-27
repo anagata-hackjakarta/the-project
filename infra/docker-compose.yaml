@@ -1,0 +1,88 @@
+services:
+  traefik:
+    container_name: traefik-reverse-proxy
+    image: docker.io/library/traefik:latest
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./workdir/traefik/certs:/etc/traefik/certs
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    ports:
+      - 80:80
+      - 443:443/tcp
+      - 443:443/udp
+      - 8080:8080
+    labels:
+      traefik.enable: true
+      # Global Redirect to HTTPS
+      traefik.http.routers.http-catchall.rule: hostregexp(`{thatismunn-my-id:^(?:[a-z0-9-]+\.)*thatismunn\.my\.id$}`)
+      traefik.http.routers.http-catchall.entrypoints: web
+      traefik.http.routers.http-catchall.middlewares: redirect-to-https
+      # Redirect to HTTPS middleware
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+      # HSTS Middleware
+      traefik.http.middlewares.hsts.headers.stsSeconds: 15552000
+      traefik.http.middlewares.hsts.headers.stsIncludeSubdomains: true
+    networks:
+      - public
+      - private
+  traefik-whoami:
+    container_name: traefik-whoami
+    image: docker.io/traefik/whoami
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami.rule: Host(`whoami-himeko.thatismunn.my.id`)
+      traefik.http.routers.whoami.tls: true
+      traefik.http.routers.whoami.tls.certresolver: letsencrypt
+      treefik.http.routers.whoami.entrypoints: websecure
+      traefik.http.services.whoami.loadbalancer.server.port: 80
+    networks:
+      - public
+  backend-api:
+    container_name: anagata-backend-api
+    image: ghcr.io/anagata-hackjakarta/safina-ai-api:latest
+    restart: unless-stopped
+    env_file: .env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.backend-api.rule: Host(`api-himeko.thatismunn.my.id`)
+      traefik.http.routers.backend-api.tls: true
+      traefik.http.routers.backend-api.tls.certresolver: letsencrypt
+      treefik.http.routers.backend-api.entrypoints: websecure
+      traefik.http.services.backend-api.loadbalancer.server.port: 5000
+    networks:
+      - public
+  mariadb:
+    container_name: mariadb
+    image: docker.io/library/mariadb:11.4.2-noble
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD
+      interval: 5s
+      retries: 5
+    volumes:
+      - ./workdir/mariadb:/var/lib/mysql:z
+    ports:
+      - 3306:3306
+    networks:
+      - public
+      - private
+
+networks:
+  private:
+    ipam:
+      driver: default
+    internal: true
+  public:
+    ipam:
+      driver: default
+    internal: false

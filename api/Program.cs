@@ -1,3 +1,5 @@
+using Anagata.Backend.Models;
+
 namespace Anagata.Backend;
 public class Program
 {
@@ -24,6 +26,9 @@ public class Program
     {
         // Add Controller Path
         builder.Services.AddControllers();
+
+        // Add EFCore
+        builder.Services.AddDbContext<DatabaseContext>();
 
         // Logger
         builder.Services.AddLogging(logger =>

@@ -1,0 +1,5 @@
+.env
+workdir/**
+!workdir/.gitkeep
+.vimsession
+traefik.yml

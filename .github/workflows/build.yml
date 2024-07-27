@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-api:
-    uses: ./workflows/build.yml
+    uses: ./.github/workflows/build-docker.yml
     with:
       folder_path: api/
       images_name: ghcr.io/safina-ai-api

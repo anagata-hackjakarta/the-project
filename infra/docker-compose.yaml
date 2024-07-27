@@ -50,6 +50,7 @@ services:
     container_name: anagata-backend-api
     image: ghcr.io/anagata-hackjakarta/safina-ai-api:latest
     restart: unless-stopped
+    env_file: .env
     labels:
       traefik.enable: true
       traefik.http.routers.backend-api.rule: Host(`api-himeko.thatismunn.my.id`)

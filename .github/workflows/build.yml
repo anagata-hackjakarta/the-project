@@ -20,3 +20,10 @@ jobs:
       folder_path: api/socket/
       images_name: ghcr.io/anagata-hackjakarta/safina-ai-socket
     secrets: inherit
+
+  build-ai:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      folder_path: ai
+      images_name: ghcr.io/anagata-hackjakarta/safina-ai-ai
+    secrets: inherit

@@ -1,1 +1,4 @@
 .env
+workdir/**
+!workdir/.gitkeep
+.vimsession

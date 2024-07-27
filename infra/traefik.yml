@@ -1,0 +1,65 @@
+global:
+  sendAnonymousUsage: false 
+
+# Log information
+log:
+  level: DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: common
+    #filePath: /var/log/traefik/traefik.log
+
+# Accesslog
+accesslog:
+  format: json  # common, json, logfmt
+  filePath: /var/log/traefik/access.log
+
+# Enable API and Dashboard
+api:
+ dashboard: true
+ insecure: true
+
+# Entry Points configuration
+entryPoints:
+  web:
+    address: :80
+    #  Redirect to HTTPS
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: :443
+    http2:
+      maxConcurrentStreams: 250
+
+# Define certificateResolvers
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: contact@ikr4m.my.id
+      storage: /etc/traefik/certs/acme.json
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      keyType: EC256
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+
+# Define TLS options
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+    cloudflare:
+      sniStrict: false
+      minVersion: VersionTLS13
+
+# Add config providers
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik
+    watch: true

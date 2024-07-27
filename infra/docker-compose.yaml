@@ -22,7 +22,7 @@ services:
     labels:
       traefik.enable: true
       # Global Redirect to HTTPS
-      traefik.http.routers.http-catchall.rule: hostregexp(`{himeko-anagata:^(?:[a-z0-9-]+\.)*himeko\.thatismunn\.my\.id$}`)
+      traefik.http.routers.http-catchall.rule: hostregexp(`{thatismunn-my-id:^(?:[a-z0-9-]+\.)*thatismunn\.my\.id$}`)
       traefik.http.routers.http-catchall.entrypoints: web
       traefik.http.routers.http-catchall.middlewares: redirect-to-https
       # Redirect to HTTPS middleware
@@ -33,7 +33,7 @@ services:
     networks:
       - public
       - private
-  whoami:
+  traefik-whoami:
     container_name: traefik-whoami
     image: docker.io/traefik/whoami
     restart: unless-stopped

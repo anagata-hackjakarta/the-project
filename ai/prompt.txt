@@ -23,6 +23,7 @@ Severity Type:
 
 Return the result JSON format, example:
 {
+ \"sensor_id\": \"...\",
  \"trip_id\": \"12345\",
  \"user_id\": \"67890\",
  \"timestamp\": \"2024-07-24T15:30:00Z\",

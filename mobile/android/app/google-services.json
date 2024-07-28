@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "144878308779",
+    "project_id": "safina-anglehack",
+    "storage_bucket": "safina-anglehack.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144878308779:android:216691090df1339bd9d6ee",
+        "android_client_info": {
+          "package_name": "com.anglehack.safina"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRl3IzJFm4N-Y7A6stzD8roZbJUplHxFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

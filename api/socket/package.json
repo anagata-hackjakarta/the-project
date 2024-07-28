@@ -9,6 +9,9 @@
   "author": "Anagata",
   "license": "ISC",
   "devDependencies": {
+    "@types/mysql": "^2.15.26",
+    "axios": "^1.7.2",
+    "mysql": "^2.18.1",
     "socket.io": "^4.7.5",
     "tsx": "^4.16.2"
   }

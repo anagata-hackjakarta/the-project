@@ -60,6 +60,39 @@ services:
       traefik.http.services.backend-api.loadbalancer.server.port: 5000
     networks:
       - public
+      - private
+  backend-socket:
+    container_name: anagata-backend-socket
+    image: ghcr.io/anagata-hackjakarta/safina-ai-socket:latest
+    restart: unless-stopped
+    env_file: .env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.backend-socket.rule: Host(`socket-api-himeko.thatismunn.my.id`)
+      traefik.http.routers.backend-socket.tls: true
+      traefik.http.routers.backend-socket.tls.certresolver: letsencrypt
+      treefik.http.routers.backend-socket.entrypoints: websecure
+      traefik.http.services.backend-socket.loadbalancer.server.port: 3000
+    networks:
+      - public
+      - private
+  backend-ai:
+    container_name: anagata-backend-ai
+    image: ghcr.io/anagata-hackjakarta/safina-ai-ai:latest
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./key.json:/app/key.json:z
+    labels:
+      traefik.enable: true
+      traefik.http.routers.backend-ai.rule: Host(`ai-api-himeko.thatismunn.my.id`)
+      traefik.http.routers.backend-ai.tls: true
+      traefik.http.routers.backend-ai.tls.certresolver: letsencrypt
+      treefik.http.routers.backend-ai.entrypoints: websecure
+      traefik.http.services.backend-ai.loadbalancer.server.port: 8080
+    networks:
+      - public
+      - private
   mariadb:
     container_name: mariadb
     image: docker.io/library/mariadb:11.4.2-noble

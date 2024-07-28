@@ -3,6 +3,7 @@ using Anagata.Backend.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anagata.Backend.Controllers;
 [ApiController, Route("/v1/trip")]
@@ -21,17 +22,23 @@ public class TripController : Controller
     {
         var response = new TripReturnJson();
         await _ctx.AddAsync<Trip>(trip);
-        await _ctx.SaveChangesAsync();
 
+        var user = await _ctx.User.Where(x => x.UUID == trip.UUID).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            response.Message = "User not found.";
+            return NotFound(response);
+        }
+
+        await _ctx.SaveChangesAsync();
         response.Message = "Trip started";
-        response.Trip = trip;
+        response.TripId = trip.Id;
         return Ok(response);
     }
 
     public class TripReturnJson : ReturnJson
     {
-        [JsonPropertyName("trip")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Trip? Trip { get; set; }
+        [JsonPropertyName("tripId")]
+        public int TripId { get; set; }
     }
 }
